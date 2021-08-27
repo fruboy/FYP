@@ -12,14 +12,10 @@ function LineChart() {
                 data:[5, 2, 4,8,7,5],
                 fill: true,
                 borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1,
-               
+                tension: 0.1,             
             },
-           
-        
         ]
     }
-
     const options = {
         title:{
             display:true,
@@ -38,26 +34,10 @@ function LineChart() {
             ]
         }
     }
+
     return (
         
-            <Line data={data} options={{
-                title:{
-                    display:true,
-                    text:'Line chart'
-                },
-                scales:{
-                    yAxes:[
-        
-                        {
-                            ticks: {
-                                min:0,
-                                max:10,
-                                stepSizes:1
-                            }
-                        }
-                    ]
-                }
-            }} />
+            <Line data={data} options={options} />
     )
 }
 

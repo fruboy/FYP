@@ -3,6 +3,8 @@ import "../index.css"
 import Header from "./Header";
 import Checkbox from "./Checkbox"
 import { TimePicker } from 'antd';
+import {connect} from 'react-redux';
+import {register} from '../redux/actions/auth';
 
 // function Signup() {
 
@@ -446,7 +448,37 @@ import { TimePicker } from 'antd';
   }
   ```
 */
-export default function Signup() {
+
+
+ const Signup=({register})=> {
+
+  const [email, setemail] = useState('')
+  const [password, setpassword] = useState('')
+  const [name, setname] = useState('')
+  const [number, setnumber] = useState('')
+  const [address, setaddress] = useState({
+      street:'',
+      city:'',
+      state:'',
+      postel:''
+  })
+  const [description, setdescription] = useState('')
+
+  const onChangeAddress=(e)=>{
+    setaddress(prevState=> {
+      let add = Object.assign({}, prevState)
+      add[e.target.name]=e.target.value;
+      return add;
+    })
+  }
+
+  const submitHandle = () => {
+    console.log(name, email, password, number)
+    register (name, email, password, number)
+
+
+  }
+
   return (
     <>
 
@@ -460,14 +492,10 @@ export default function Signup() {
       <div className="mt-20 sm:mt-0">
         <div className="md:grid md:grid-cols-3 md:gap-6">
           
-          <div className="md:col-span-1 bg-indigo-600 rounded ml-5">
-            <div className="px-4 sm:px-5 mt-5 flex flex-col justify-items-center items-center" >
-            <h3 className="text-xl mt-20 font-bold leading-6 text-white">Salon Details </h3>
-            </div>
-          </div>
+    
           
-          <div className="mt-5 md:mt-0 md:col-span-2 ">
-            <form action="#" method="POST" >
+          <div className="mt-5 md:mt-0 md:col-span-2 max-w-2xl ">
+            <div >
               <div className="shadow overflow-hidden sm:rounded-md ">
 
                 <div className="px-4 py-5 bg-white sm:p-6">
@@ -477,11 +505,13 @@ export default function Signup() {
                         Email
                       </label>
                       <input
-                        type="text"
-                        name="first_name"
-                        id="first_name"
-                        placeholder="your@.com"
-                        className="mt-1 bg-gray-300 w-full py-2 px-2 rounded-md"
+                        type="email"
+                        name="email"
+                        id="email"
+                        placeholder="your@email.com"
+                        value={email}
+                        onChange={(e)=>{setemail(e.target.value)}}
+                        className="mt-1 bg-gray-100 w-full py-2 px-2 rounded-md text-black"
                       />
                     </div>
 
@@ -493,6 +523,8 @@ export default function Signup() {
                         type="password"
                         name="password"
                         id="password"
+                        value={password}
+                        onChange={(e)=>{setpassword(e.target.value)}}
                         className="mt-1 bg-gray-300 w-full py-2 px-2 rounded-md"
                       />
                     </div>
@@ -503,8 +535,10 @@ export default function Signup() {
                       </label>
                       <input
                         type="text"
-                        name="salon-name"
-                        id="salon-name"
+                        name="name"
+                        id="name"
+                        value={name}
+                        onChange={(e)=>{setname(e.target.value)}}
                         className="mt-1 bg-gray-300 w-full py-2 px-2 rounded-md"
                       />
                     </div>
@@ -518,7 +552,8 @@ export default function Signup() {
                         type="text"
                         name="contact"
                         id="contact"
-                        
+                        value={number}
+                        onChange={(e)=>{setnumber(e.target.value)}}
                         className="mt-1 bg-gray-300 w-full py-2 px-2 rounded-md focus:border-indigo-600"
                       />
                     </div>
@@ -530,7 +565,7 @@ export default function Signup() {
                       <select
                         id="country"
                         name="country"
-    
+
                         className="mt-1 bg-gray-300 w-full py-2 px-2 rounded-md"
                       >
                         <option>Pakistan</option>
@@ -544,9 +579,10 @@ export default function Signup() {
                       </label>
                       <input
                         type="text"
-                        name="street_address"
-                        id="street_address"
-                        autoComplete="street-address"
+                        name="street"
+                        id="street"
+                        value={address.street}
+                        onChange={onChangeAddress}
                         className="mt-1 bg-gray-300 w-full py-2 px-2 rounded-md"
                       />
                     </div>
@@ -559,6 +595,8 @@ export default function Signup() {
                         type="text"
                         name="city"
                         id="city"
+                        value={address.city}
+                        onChange={onChangeAddress}
                         className="mt-1 bg-gray-300 w-full py-2 px-2 rounded-md"
                       />
                     </div>
@@ -571,6 +609,8 @@ export default function Signup() {
                         type="text"
                         name="state"
                         id="state"
+                        value={address.state}
+                        onChange={onChangeAddress}
                         className="mt-1 bg-gray-300 w-full py-2 px-2 rounded-md"
                       />
                     </div>
@@ -581,9 +621,10 @@ export default function Signup() {
                       </label>
                       <input
                         type="text"
-                        name="postal_code"
-                        id="postal_code"
-                        autoComplete="postal-code"
+                        name="postel"
+                        id="postal"
+                        value={address.postel}
+                        onChange={onChangeAddress}
                         className="mt-1 bg-gray-300 w-full py-2 px-2 rounded-md"
                       />
                     </div>
@@ -591,7 +632,7 @@ export default function Signup() {
                 </div>
          
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
@@ -605,7 +646,7 @@ export default function Signup() {
             </div>
           </div>
           <div className="mt-5 md:mt-0 md:col-span-2">
-            <form action="#" method="POST">
+            <div>
               <div className="shadow sm:rounded-md sm:overflow-hidden">
                 <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
                   
@@ -617,11 +658,13 @@ export default function Signup() {
                     <div className="mt-1">
                       <textarea
                         id="about"
-                        name="about"
+                        name="description"
                         rows={3}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md bg-gray-300 py-2 px-2"
                         placeholder=""
                         defaultValue={''}
+                        value={description}
+                        onChange={(e)=>{setdescription(e.target.value)}}
                       />
                     </div>
                     <p className="mt-2 text-sm text-gray-500">
@@ -655,7 +698,7 @@ export default function Signup() {
                             className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
                           >
                             <span>Upload a file</span>
-                            <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                            <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={(e)=>{console.log(e)}} />
                           </label>
                           
                         </div>
@@ -666,7 +709,7 @@ export default function Signup() {
                 </div>
                 
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
@@ -712,7 +755,8 @@ export default function Signup() {
                 </div>
                 <div className="px-4 py-3 bg-gray-50 text-right sm:px-6 flex">
                   <button
-                    type="submit"
+                    onClick={submitHandle}
+                   
                     className="inline-flex w-full justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     Register
@@ -726,3 +770,5 @@ export default function Signup() {
     </>
   )
 }
+
+export default connect(null, {register})(Signup);
