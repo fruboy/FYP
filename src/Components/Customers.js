@@ -6,10 +6,17 @@ import axios from 'axios';
 export default function Customers() {
     const [dataSource, setdataSource] = React.useState([]);
     const [modalVisibilty, setmodalVisibilty] = React.useState(false);
+    const [editmodalVisibilty, seteditmodalVisibilty] = React.useState(false);
+    
     const { confirm } = Modal;
 
     const [form] = Form.useForm();
     const onFinish = (values) => {
+        console.log('Received values of form: ', values);
+        form.resetFields();
+        setmodalVisibilty(false);
+    };
+    const onFinishedit = (values) => {
         console.log('Received values of form: ', values);
         form.resetFields();
         setmodalVisibilty(false);
@@ -90,7 +97,8 @@ export default function Customers() {
                 <Space size="middle">
                     <Button
                         type="default"
-                        style={{ backgroundColor: "#1F2937", color: 'white' }}>
+                        style={{ backgroundColor: "#1F2937", color: 'white' }}
+                        onClick={() => filleditform(record)}>
                         Edit
                     </Button>
                     <Button onClick={showConfirm} type="default"
@@ -99,8 +107,16 @@ export default function Customers() {
             ),
         },
     ];
+    const filleditform = (record)=>{
+        form.setFieldsValue({
+            editname: record.name,
+            editemail: record.Email,
+            editphone: record.number
+        });
+        seteditmodalVisibilty(true);
+    };
     React.useEffect(() => {
-        axios.get(`http://arsalon.xyz:5000/Salons/CustomersData`)
+        axios.get(`http://3.138.67.96:5000/Salons/CustomersData`)
             .then(res => {
                 const result = res.data;
                 setdataSource(result);
@@ -133,16 +149,13 @@ export default function Customers() {
                 centered
                 visible={modalVisibilty}
                 onCancel={() => setmodalVisibilty(false)}
+                footer={null}
             >
                 <Form
                     {...formItemLayout}
                     form={form}
                     name="register"
                     onFinish={onFinish}
-                    initialValues={{
-                        residence: ['zhejiang', 'hangzhou', 'xihu'],
-                        prefix: '86',
-                    }}
                     scrollToFirstError
                 >
                     <Form.Item
@@ -233,6 +246,109 @@ export default function Customers() {
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="primary" htmlType="submit">
                             Register
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <Modal
+                title="Edit Customer"
+                centered
+                visible={editmodalVisibilty}
+                onCancel={() => seteditmodalVisibilty(false)}
+                footer={null}
+            >
+                <Form
+                    {...formItemLayout}
+                    form={form}
+                    name="edit"
+                    onFinish={onFinishedit}
+                    scrollToFirstError
+                >
+                    <Form.Item
+                        name="editname"
+                        label="Edit Full Name"
+                        tooltip="Please enter your full name"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter your full name!',
+                                whitespace: true,
+                            },
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name="editemail"
+                        label="E-mail"
+                        rules={[
+                            {
+                                type: 'email',
+                                message: 'The input is not valid E-mail!',
+                            },
+                            {
+                                required: true,
+                                message: 'Please input your E-mail!',
+                            },
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name="editpassword"
+                        label="Enter New Password"
+                        rules={[
+                            {
+                                required: false,
+                                message: 'Please input your password!',
+                            },
+                        ]}
+                        hasFeedback
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item
+                        name="confirmedit"
+                        label="Confirm Password"
+                        dependencies={['password']}
+                        hasFeedback
+                        rules={[
+                            {
+                                required: false,
+                                message: 'Please confirm your password!',
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (!value || getFieldValue('editpassword') === value) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                                },
+                            }),
+                        ]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item
+                        name="editphone"
+                        label="Edit Phone Number"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input your phone number!',
+                            },
+                        ]}
+                    >
+                        <Input
+                            addonBefore={prefixSelector}
+                            style={{
+                                width: '100%',
+                            }}
+                        />
+                    </Form.Item>
+                    <Form.Item {...tailFormItemLayout}>
+                        <Button type="primary" htmlType="submit">
+                            Update
                         </Button>
                     </Form.Item>
                 </Form>
