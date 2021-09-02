@@ -7,10 +7,11 @@ export default function Customers() {
     const [dataSource, setdataSource] = React.useState([]);
     const [modalVisibilty, setmodalVisibilty] = React.useState(false);
     const [editmodalVisibilty, seteditmodalVisibilty] = React.useState(false);
-    
+    const [form] = Form.useForm();
+
     const { confirm } = Modal;
 
-    const [form] = Form.useForm();
+    
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
         form.resetFields();
