@@ -1,11 +1,10 @@
 import { Fragment, useState, useContext } from 'react'
 import { Disclosure } from '@headlessui/react'
-import { Button, Tooltip } from 'antd';
-import { MenuOutlined, CloseOutlined, SearchOutlined } from '@ant-design/icons'
+import { Button} from 'antd';
+import { MenuOutlined, CloseOutlined} from '@ant-design/icons'
 import {
     Link
 } from "react-router-dom";
-import HeaderSearch from 'ant-design-pro/lib/HeaderSearch';
 import { UserContext } from '../userContext';
 
 const navigation = [{ "nav": 'Dashboard', "link": '/' }, { "nav": 'Customers', "link": '/customers' }, { "nav": 'Salons', "link": '/salons' }, { "nav": 'Membership Plans', "link": "/membershipplans" }, { "nav": 'Complains', "link": "/complains" }];

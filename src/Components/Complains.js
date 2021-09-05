@@ -119,13 +119,6 @@ export default function Complains() {
             key: 'action',
             render: (text, record) => (
                 <Space size="middle">
-                    <Button
-                        type="default"
-                        style={{ backgroundColor: "#1F2937", color: 'white' }}
-                        onClick={() => filleditform(record)}
-                    >
-                        Edit
-                    </Button>
                     <Button onClick={showConfirm} type="default"
                         style={{ backgroundColor: "#1F2937", color: 'white' }}>Delete</Button>
                 </Space>

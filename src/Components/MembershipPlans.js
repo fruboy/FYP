@@ -1,4 +1,4 @@
-import { Table, Space, Button,Modal, Input,Form } from 'antd';
+import { Table, Space, Button, Modal, Input, Form } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import React from 'react';
 export default function Plans() {
@@ -47,11 +47,6 @@ export default function Plans() {
             },
         },
     };
-    const prefixSelector = (
-        <Form.Item name="prefix" noStyle>
-            +92
-        </Form.Item>
-    );
 
     const dataSource = [
         {
@@ -90,14 +85,9 @@ export default function Plans() {
                 placeholder="Plan Name"
                 value={value}
                 onChange={e => {
-                    const currValue = e.target.value;
-                    setValue(currValue);
-                    const filteredData = dataSource.filter(entry =>
-                        entry.name.includes(currValue)
-                    );
-                    dataSource = filteredData;
+                    
                 }}
-                style={{width: 200,marginRight: -200}}
+                style={{ width: 200, marginRight: -200 }}
             />
         </>
     );
@@ -129,9 +119,11 @@ export default function Plans() {
                 <Space size="middle">
                     <Button
                         type="default"
-                        style={{ backgroundColor: "#1F2937", color: 'white' }}>
+                        style={{ backgroundColor: "#1F2937", color: 'white' }}
+                        onClick={() => filleditform(record)}
+                    >
                         Edit
-                        </Button>
+                    </Button>
                     <Button onClick={showConfirm} type="default"
                         style={{ backgroundColor: "#1F2937", color: 'white' }}>Delete</Button>
                 </Space>
@@ -139,7 +131,7 @@ export default function Plans() {
         },
     ];
     const { confirm } = Modal;
-    
+
     function showConfirm() {
         confirm({
             title: 'Do you Want to delete these items?',
@@ -153,6 +145,15 @@ export default function Plans() {
             },
         });
     }
+    const filleditform = (record)=>{
+        console.log(record)
+        form.setFieldsValue({
+            editname: record.name,
+            editduration: record.duration,
+            editprice: record.price
+        });
+        seteditmodalVisibilty(true);
+    };
     return (
         <div>
             <header className="bg-white shadow">
@@ -174,7 +175,7 @@ export default function Plans() {
                 <Table dataSource={dataSource} columns={columns} style={{ margin: '20px' }} />
             </div>
             <Modal
-                title="Add new Customer"
+                title="Add new Plan"
                 centered
                 visible={modalVisibilty}
                 onCancel={() => setmodalVisibilty(false)}
@@ -189,12 +190,12 @@ export default function Plans() {
                 >
                     <Form.Item
                         name="name"
-                        label="Full Name"
-                        tooltip="Please enter your full name"
+                        label="Enter Plan Name"
+                        tooltip="Please enter the membership plan name"
                         rules={[
                             {
                                 required: true,
-                                message: 'Please enter your full name!',
+                                message: 'Please enter the membership plan name!',
                                 whitespace: true,
                             },
                         ]}
@@ -202,85 +203,38 @@ export default function Plans() {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="email"
-                        label="E-mail"
+                        name="price"
+                        label="Price"
                         rules={[
                             {
-                                type: 'email',
-                                message: 'The input is not valid E-mail!',
-                            },
-                            {
                                 required: true,
-                                message: 'Please input your E-mail!',
+                                message: 'Please input the plan price!',
                             },
                         ]}
                     >
                         <Input />
                     </Form.Item>
-
                     <Form.Item
-                        name="password"
-                        label="Password"
+                        name="duration"
+                        label="Plan Duration"
                         rules={[
                             {
                                 required: true,
-                                message: 'Please input your password!',
-                            },
-                        ]}
-                        hasFeedback
-                    >
-                        <Input.Password />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="confirm"
-                        label="Confirm Password"
-                        dependencies={['password']}
-                        hasFeedback
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please confirm your password!',
-                            },
-                            ({ getFieldValue }) => ({
-                                validator(_, value) {
-                                    if (!value || getFieldValue('password') === value) {
-                                        return Promise.resolve();
-                                    }
-
-                                    return Promise.reject(new Error('The two passwords that you entered do not match!'));
-                                },
-                            }),
-                        ]}
-                    >
-                        <Input.Password />
-                    </Form.Item>
-                    <Form.Item
-                        name="phone"
-                        label="Phone Number"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your phone number!',
+                                message: 'Please input the plan duration!',
                             },
                         ]}
                     >
-                        <Input
-                            addonBefore={prefixSelector}
-                            style={{
-                                width: '100%',
-                            }}
-                        />
+                        <Input />
                     </Form.Item>
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="primary" htmlType="submit">
-                            Register
+                            Create
                         </Button>
                     </Form.Item>
                 </Form>
             </Modal>
             <Modal
-                title="Edit Customer"
+                title="Edit Membership Plan"
                 centered
                 visible={editmodalVisibilty}
                 onCancel={() => seteditmodalVisibilty(false)}
@@ -295,12 +249,12 @@ export default function Plans() {
                 >
                     <Form.Item
                         name="editname"
-                        label="Edit Full Name"
-                        tooltip="Please enter your full name"
+                        label="Edit Plan Name"
+                        tooltip="Please enter the membership plan name"
                         rules={[
                             {
                                 required: true,
-                                message: 'Please enter your full name!',
+                                message: 'Please enter the membership plan name!',
                                 whitespace: true,
                             },
                         ]}
@@ -308,72 +262,28 @@ export default function Plans() {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="editemail"
-                        label="E-mail"
+                        name="editprice"
+                        label="Price"
                         rules={[
                             {
-                                type: 'email',
-                                message: 'The input is not valid E-mail!',
-                            },
-                            {
                                 required: true,
-                                message: 'Please input your E-mail!',
+                                message: 'Please input the plan price!',
                             },
                         ]}
                     >
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="editpassword"
-                        label="Enter New Password"
-                        rules={[
-                            {
-                                required: false,
-                                message: 'Please input your password!',
-                            },
-                        ]}
-                        hasFeedback
-                    >
-                        <Input.Password />
-                    </Form.Item>
-                    <Form.Item
-                        name="confirmedit"
-                        label="Confirm Password"
-                        dependencies={['password']}
-                        hasFeedback
-                        rules={[
-                            {
-                                required: false,
-                                message: 'Please confirm your password!',
-                            },
-                            ({ getFieldValue }) => ({
-                                validator(_, value) {
-                                    if (!value || getFieldValue('editpassword') === value) {
-                                        return Promise.resolve();
-                                    }
-                                    return Promise.reject(new Error('The two passwords that you entered do not match!'));
-                                },
-                            }),
-                        ]}
-                    >
-                        <Input.Password />
-                    </Form.Item>
-                    <Form.Item
-                        name="editphone"
-                        label="Edit Phone Number"
+                        name="editduration"
+                        label="Plan Duration"
                         rules={[
                             {
                                 required: true,
-                                message: 'Please input your phone number!',
+                                message: 'Please input the plan duration!',
                             },
                         ]}
                     >
-                        <Input
-                            addonBefore={prefixSelector}
-                            style={{
-                                width: '100%',
-                            }}
-                        />
+                        <Input />
                     </Form.Item>
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="primary" htmlType="submit">
