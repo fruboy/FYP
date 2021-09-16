@@ -84,6 +84,7 @@ export default function Salons() {
                     );
                     setdataSource(filteredData);
                 }}
+                style={{ width: 150, marginRight: -100 }}
             />
         </>
     );

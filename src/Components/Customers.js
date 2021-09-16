@@ -8,20 +8,53 @@ export default function Customers() {
     const [dataSource, setdataSource] = React.useState([]);
     const [modalVisibilty, setmodalVisibilty] = React.useState(false);
     const [editmodalVisibilty, seteditmodalVisibilty] = React.useState(false);
+    const [editFormID, seteditFormID] = React.useState('');
     const [form] = Form.useForm();
-
+    const [editForm] = Form.useForm();
     const { confirm } = Modal;
 
-    
+
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
-        form.resetFields();
-        setmodalVisibilty(false);
+        axios.post('http://arsalon.tech:5000/Customers/addCustomer', {
+            "name": values.name,
+            "email": values.email,
+            "password": values.confirm,
+            "number": values.phone
+        })
+        .then(function (response) {
+            if (response.data.status === "Record added") {
+                alert("Membership Plan Added!");
+                form.resetFields();
+                setmodalVisibilty(false);
+            }
+            else {
+                alert("Membership Plan Not Added!");
+            }
+        })
     };
-    const onFinishedit = (values) => {
-        console.log('Received values of form: ', values);
-        form.resetFields();
-        setmodalVisibilty(false);
+    const onFinishedit = async(values) => {
+        //console.log('Received values of form: ', values);
+        await axios.put(`http://arsalon.tech:5000/Customers/editCustomer/${editFormID}`, {
+            name: values.editname,
+            email: values.editemail,
+            phone: values.editphone,
+            password: values.confirmedit
+        })
+        .then(function (response) {
+            console.log(response)
+            if (response.data.message === "Changes Saved"){
+                alert("Customer Updated!");
+                form.resetFields();
+                seteditmodalVisibilty(false);
+            }
+            else{
+                alert("Customer Not Updated!");
+            }
+        })
+        editForm.resetFields();
+        seteditmodalVisibilty(false);
+        seteditFormID('');
     };
     const tailFormItemLayout = {
         wrapperCol: {
@@ -58,13 +91,14 @@ export default function Customers() {
             +92
         </Form.Item>
     );
-    function showConfirm() {
+    function showConfirm(record) {
         confirm({
             title: 'Do you Want to delete these items?',
             icon: <ExclamationCircleOutlined />,
-            content: 'Some descriptions',
-            onOk() {
-                console.log('OK');
+            content: 'Doing this will delete this customer permanently!',
+            async onOk() {
+                var res = await axios.delete(`http://arsalon.tech:5000/Customers/deleteCustomer/${record.key}`);
+                alert(res.data.message);
             },
             onCancel() {
                 console.log('Cancel');
@@ -103,22 +137,24 @@ export default function Customers() {
                         onClick={() => filleditform(record)}>
                         Edit
                     </Button>
-                    <Button onClick={showConfirm} type="default"
+                    <Button onClick={()=>showConfirm(record)} type="default"
                         style={{ backgroundColor: "#1F2937", color: 'white' }}>Delete</Button>
                 </Space>
             ),
         },
     ];
-    const filleditform = (record)=>{
-        form.setFieldsValue({
+    const filleditform = (record) => {
+        console.log(record);
+        editForm.setFieldsValue({
             editname: record.name,
             editemail: record.Email,
             editphone: record.number
         });
         seteditmodalVisibilty(true);
+        seteditFormID(record.key);
     };
     React.useEffect(() => {
-        axios.get(`http://3.138.67.96:5000/Salons/CustomersData`)
+        axios.get(`http://3.138.67.96:5000/Customers/CustomersData`)
             .then(res => {
                 const result = res.data;
                 setdataSource(result);
@@ -190,7 +226,6 @@ export default function Customers() {
                     >
                         <Input />
                     </Form.Item>
-
                     <Form.Item
                         name="password"
                         label="Password"
@@ -204,7 +239,6 @@ export default function Customers() {
                     >
                         <Input.Password />
                     </Form.Item>
-
                     <Form.Item
                         name="confirm"
                         label="Confirm Password"
@@ -261,7 +295,7 @@ export default function Customers() {
             >
                 <Form
                     {...formItemLayout}
-                    form={form}
+                    form={editForm}
                     name="edit"
                     onFinish={onFinishedit}
                     scrollToFirstError
@@ -358,104 +392,3 @@ export default function Customers() {
         </div>
     )
 };
-/*
-const dataSource = [
-    {
-        key: '1',
-        name: 'Mike',
-        Email: 'Mike@gmail.com',
-        JoinDate: '29-05-2021',
-        number: '090078601'
-    },
-    {
-        key: '2',
-        name: 'John',
-        Email: 'john@gmail.com',
-        JoinDate: '22-05-2021',
-        number: '090078601'
-    },
-    {
-        key: '3',
-        name: 'James',
-        Email: 'james@gmail.com',
-        JoinDate: '30-05-2021',
-        number: '090078601'
-    },
-    {
-        key: '4',
-        name: 'Stuart',
-        Email: 'stuart@gmail.com',
-        JoinDate: '27-05-2021',
-        number: '090078601'
-    },
-    {
-        key: '5',
-        name: 'Kyle',
-        Email: 'kyle@gmail.com',
-        JoinDate: '23-06-2021',
-        number: '090078601'
-    },
-    {
-        key: '6',
-        name: 'Jason',
-        Email: 'jason@gmail.com',
-        JoinDate: '28-04-2021',
-        number: '090078601'
-    },
-    {
-        key: '7',
-        name: 'Peter',
-        Email: 'peter@gmail.com',
-        JoinDate: '22-05-2021',
-        number: '090078601'
-    },{
-        key: '1',
-        name: 'Mike',
-        Email: 'Mike@gmail.com',
-        JoinDate: '29-05-2021',
-        number: '090078601'
-    },
-    {
-        key: '2',
-        name: 'John',
-        Email: 'john@gmail.com',
-        JoinDate: '22-05-2021',
-        number: '090078601'
-    },
-    {
-        key: '3',
-        name: 'James',
-        Email: 'james@gmail.com',
-        JoinDate: '30-05-2021',
-        number: '090078601'
-    },
-    {
-        key: '4',
-        name: 'Stuart',
-        Email: 'stuart@gmail.com',
-        JoinDate: '27-05-2021',
-        number: '090078601'
-    },
-    {
-        key: '5',
-        name: 'Kyle',
-        Email: 'kyle@gmail.com',
-        JoinDate: '23-06-2021',
-        number: '090078601'
-    },
-    {
-        key: '6',
-        name: 'Jason',
-        Email: 'jason@gmail.com',
-        JoinDate: '28-04-2021',
-        number: '090078601'
-    },
-    {
-        key: '7',
-        name: 'Peter',
-        Email: 'peter@gmail.com',
-        JoinDate: '22-05-2021',
-        number: '090078601'
-    },
-];
-*/

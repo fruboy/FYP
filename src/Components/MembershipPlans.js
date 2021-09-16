@@ -1,21 +1,51 @@
 import { Table, Space, Button, Modal, Input, Form } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import React from 'react';
+import axios from 'axios';
 export default function Plans() {
+    const [editFormID, seteditFormID] = React.useState('');
     const [value, setValue] = React.useState('');
     const [modalVisibilty, setmodalVisibilty] = React.useState(false);
     const [editmodalVisibilty, seteditmodalVisibilty] = React.useState(false);
     const [form] = Form.useForm();
+    const [dataSource, setdataSource] = React.useState([]);
 
     const onFinish = (values) => {
-        console.log('Received values of form: ', values);
-        form.resetFields();
-        setmodalVisibilty(false);
+        axios.post('http://arsalon.tech:5000/MemPlans/addMembershipPlan', {
+            name: values.name,
+            duration: values.duration,
+            price: values.price
+        })
+        .then(function (response) {
+            if (response.data.status === "Record added"){
+                alert("Membership Plan Added!");
+                form.resetFields();
+                setmodalVisibilty(false);
+            }
+            else{
+                alert("Membership Plan Not Added!");
+            }
+        })
     };
-    const onFinishedit = (values) => {
-        console.log('Received values of form: ', values);
+    const onFinishedit = async (values) => {
+        await axios.put(`http://arsalon.tech:5000/MemPlans/editPlan/${editFormID}`, {
+            name: values.editname,
+            duration: values.editduration,
+            price: parseInt(values.editprice)
+        })
+        .then(function (response) {
+            if (response.data.message === "Changes Saved"){
+                alert("Membership Plan Updated!");
+                form.resetFields();
+                seteditmodalVisibilty(false);
+            }
+            else{
+                alert("Membership Plan Not Updated!");
+            }
+        })
         form.resetFields();
-        setmodalVisibilty(false);
+        seteditmodalVisibilty(false);
+        seteditFormID('');
     };
     const tailFormItemLayout = {
         wrapperCol: {
@@ -48,36 +78,6 @@ export default function Plans() {
         },
     };
 
-    const dataSource = [
-        {
-            key: '1',
-            name: 'Basic',
-            price: '2000',
-            duration: '1 year',
-            salons: 78
-        },
-        {
-            key: '2',
-            name: 'Advance',
-            price: '5000',
-            duration: '1 year',
-            salons: 50
-        },
-        {
-            key: '3',
-            name: 'Advance Plus',
-            price: '10000',
-            duration: '1 year',
-            salons: 12
-        },
-        {
-            key: '4',
-            name: 'Basic Plus',
-            price: '2500',
-            duration: '1 year',
-            salons: 69
-        }
-    ];
     const FilterByNameInput = (
         <>
             <h2>Name</h2>
@@ -85,7 +85,7 @@ export default function Plans() {
                 placeholder="Plan Name"
                 value={value}
                 onChange={e => {
-                    
+
                 }}
                 style={{ width: 200, marginRight: -200 }}
             />
@@ -124,7 +124,7 @@ export default function Plans() {
                     >
                         Edit
                     </Button>
-                    <Button onClick={showConfirm} type="default"
+                    <Button onClick={()=>showConfirm(record)} type="default"
                         style={{ backgroundColor: "#1F2937", color: 'white' }}>Delete</Button>
                 </Space>
             ),
@@ -132,28 +132,37 @@ export default function Plans() {
     ];
     const { confirm } = Modal;
 
-    function showConfirm() {
+    function showConfirm(record)  {
         confirm({
             title: 'Do you Want to delete these items?',
             icon: <ExclamationCircleOutlined />,
-            content: 'Some descriptions',
-            onOk() {
-                console.log('OK');
+            content: 'Doing this will membership plan permanently!',
+            async onOk() {
+                var res = await axios.delete(`http://arsalon.tech:5000/MemPlans/deletePlan/${record.key}`);
+                alert(res.data.message);
             },
             onCancel() {
                 console.log('Cancel');
             },
         });
     }
-    const filleditform = (record)=>{
-        console.log(record)
+    const filleditform = (record) => {
         form.setFieldsValue({
             editname: record.name,
             editduration: record.duration,
             editprice: record.price
         });
+        seteditFormID(record.key);
         seteditmodalVisibilty(true);
     };
+    React.useEffect(() => {
+        axios.get(`http://arsalon.tech:5000/MemPlans/memPlans`)
+            .then(res => {
+                const result = res.data;
+                setdataSource(result);
+            })
+    }, [dataSource]);
+
     return (
         <div>
             <header className="bg-white shadow">
